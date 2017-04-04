@@ -115,7 +115,7 @@ down() {
 
 env() {
     echo "export BOSH_ENVIRONMENT=$(ip)"
-    echo "export BOSH_CA_CERT='$(ca_cert)'"
+    echo "export BOSH_CA_CERT='$(cat $(ca_cert))'"
     echo "export BOSH_CLIENT=admin"
     echo "export BOSH_CLIENT_SECRET=$(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/name=admin/password)"
 }

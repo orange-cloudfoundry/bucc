@@ -1,0 +1,43 @@
+resource_types:
+  - name: bosh2-deployment
+    type: docker-image
+    source:
+      repository: cloudfoundry/bosh-deployment-resource
+      tag: v2.2.0
+
+resources:
+  - name: stemcell
+    type: bosh-io-stemcell
+    source:
+      name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+      version_family: "3363.12"
+  - name: cf-deployment
+    type: git
+    source:
+      branch: master
+      uri: https://github.com/cloudfoundry/cf-deployment.git
+  - name: bucc-lite-cf
+    type: bosh2-deployment
+    source:
+      deployment: cf
+      target: {{bosh_target}}
+      client: {{bosh_client}}
+      client_secret: {{bosh_client_secret}}
+      ca_cert: {{bosh_ca_cert}}
+      
+jobs:
+  - name: deploy cf
+    public: true
+    plan:
+      - aggregate: 
+          - get: cf-deployment
+          - get: stemcell
+      - put: bucc-lite-cf
+        params:
+          manifest: cf-deployment/cf-deployment.yml
+          stemcells:
+          - stemcell/*.tgz
+          ops_files:
+          - cf-deployment/operations/bosh-lite.yml
+          vars:
+            system_domain: bosh-lite.com
