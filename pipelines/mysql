@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "Updating cloud-config"
+bosh -n update-cloud-config <(curl -s 'https://raw.githubusercontent.com/cloudfoundry/cf-mysql-deployment/master/bosh-lite/cloud-config.yml')
+
+echo ""
+echo "Updating pipeline"
+fly -t bucc set-pipeline -n -c ./pipelines/mysql.yml -p mysql \
+    --var "bosh_target=${BOSH_ENVIRONMENT}" \
+    --var "bosh_client=${BOSH_CLIENT}" \
+    --var "bosh_client_secret=${BOSH_CLIENT_SECRET}" \
+    --var "bosh_ca_cert=${BOSH_CA_CERT}"

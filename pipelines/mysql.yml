@@ -1,0 +1,41 @@
+resource_types:
+  - name: bosh2-deployment
+    type: docker-image
+    source:
+      repository: cloudfoundry/bosh-deployment-resource
+      tag: v2.2.0
+
+resources:
+  - name: stemcell
+    type: bosh-io-stemcell
+    source:
+      name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+      version_family: "3312.17"
+  - name: cf-mysql-deployment
+    type: git
+    source:
+      branch: master
+      uri: https://github.com/cloudfoundry/cf-mysql-deployment
+  - name: bucc-lite-cf-mysql
+    type: bosh2-deployment
+    source:
+      deployment: cf-mysql
+      target: {{bosh_target}}
+      client: {{bosh_client}}
+      client_secret: {{bosh_client_secret}}
+      ca_cert: {{bosh_ca_cert}}
+      
+jobs:
+  - name: deploy_mysql
+    public: true
+    plan:
+      - aggregate: 
+          - get: cf-mysql-deployment
+          - get: stemcell
+      - put: bucc-lite-cf-mysql
+        params:
+          manifest: cf-mysql-deployment/cf-mysql-deployment.yml
+          stemcells:
+          - stemcell/*.tgz
+          ops_files: []
+          vars: {}
