@@ -27,10 +27,18 @@
       - host: 8080 # cfg serv
 
 - type: replace
-  path: /cloud_provider/template?
+  path: /instance_groups/name=bosh/jobs/-
   value: &cpi_job
     name: warden_cpi
     release: bosh-warden-cpi
+
+- type: replace
+  path: /instance_groups/name=bosh/properties/director/cpi_job?
+  value: warden_cpi
+
+- type: replace
+  path: /cloud_provider/template?
+  value: *cpi_job
 
 - type: replace
   path: /cloud_provider/properties/warden_cpi?
