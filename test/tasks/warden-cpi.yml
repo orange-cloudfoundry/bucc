@@ -41,7 +41,7 @@
   value: *cpi_job
 
 - type: replace
-  path: /cloud_provider/properties/warden_cpi?
+  path: /instance_groups/name=bosh/properties/warden_cpi?
   value:
     warden:
       connect_address: ((garden_host)):7777
