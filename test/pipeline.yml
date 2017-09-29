@@ -4,18 +4,29 @@ jobs:
   - aggregate:
     - get: stemcell
     - get: bosh-deployment
+    - get: bucc-ci
   - put: cloud-config
     params:
       manifest: bosh-deployment/warden/cloud-config.yml
       releases: []
   - put: deploy
     params:
+      no_redact: true
       manifest: bosh-deployment/bosh.yml
       stemcells: [ stemcell/stemcell.tgz ]
-      ops_files: [ bosh-deployment/misc/bosh-dev.yml ]
-      vars: { internal_ip: 10.244.0.34 }
+      ops_files: [ bosh-deployment/misc/bosh-dev.yml, bucc-ci/tasks/warden-cpi.yml ]
+      vars: { internal_ip: 10.244.0.34, director_name: inception }
 
 resources:
+  - name: bucc-ci
+    type: git
+    source:
+      uri: https://github.com/starkandwayne/bucc.git
+      branch: pipeline-test
+      paths: [test/*]
+      disable_ci_skip: true
+
+
 - name: bosh-deployment
   type: git
   source:
@@ -25,11 +36,14 @@ resources:
 - name: stemcell
   type: bosh-io-stemcell
   source:
+    # we can update this value in the in the ci/get-latest-bosh-deployment
+    # grep version src/bosh-deployment/misc/bosh-dev.yml | sed 's/[^0-9.]*\([0-9.]*\).*/\1/'
     name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+    version_family: "3445.7"
 
 - name: deploy
   type: bosh-deployment
-  source: 
+  source:
     <<: *deployment
     <<: *bosh_env
 
@@ -57,4 +71,3 @@ resource_types:
 - name: bosh-deployment
   type: docker-image
   source: { repository: cloudfoundry/bosh-deployment-resource }
-
