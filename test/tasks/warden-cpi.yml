@@ -44,7 +44,7 @@
   path: /instance_groups/name=bosh/properties/warden_cpi?
   value: &warden
     warden:
-      connect_address: 127.0.0.1:7777
+      connect_address: ((internal_ip)):7777
       connect_network: tcp
     agent: # todo remove
       mbus: "https://mbus:((mbus_bootstrap_password))@0.0.0.0:6868"
