@@ -13,7 +13,7 @@ jobs:
     params:
       no_redact: true
       manifest: bosh-deployment/bosh.yml
-      # stemcells: [ stemcell/stemcell.tgz ]
+      stemcells: [ stemcell/stemcell.tgz ]
       ops_files: [ bucc-ci/test/tasks/warden-cpi.yml, bosh-deployment/misc/bosh-dev.yml ]
       vars: { internal_ip: 10.244.0.34, director_name: inception }
 
