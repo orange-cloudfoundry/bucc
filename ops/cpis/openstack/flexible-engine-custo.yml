@@ -1,0 +1,23 @@
+#--- Openstack cpi config (specific Flexible Engine)
+- type: replace
+  path: /cloud_provider/properties/openstack/state_timeout?
+  value: 900 #--- Default value 300
+- type: replace
+  path: /instance_groups/name=bosh/properties/openstack/state_timeout?
+  value: 900 #--- Default value 300
+
+- type: replace
+  path: /cloud_provider/properties/openstack/connection_options?/connect_timeout
+  value: 360
+- type: replace
+  path: /instance_groups/name=bosh/properties/openstack/connection_options?/connect_timeout
+  value: 360
+
+#--- Disable SSL verification for FE
+- type: replace
+  path: /cloud_provider/properties/openstack/connection_options?/ssl_verify_peer
+  value: false
+- type: replace
+  path: /instance_groups/name=bosh/properties/openstack/connection_options?/ssl_verify_peer
+  value: false
+
